@@ -21,23 +21,18 @@ app.get("/", function(req, res){
     res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
-app.get("/api/notes", function(req, res){
+app.get("/notes", function(req, res){
     res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
-// app.get("/api/notes", function(req, res){
-//     readFilesAsync(path.join(__dirname, "./db/db.json"), "utf8")
-//     .then(function(data){
-//         return res.json(JSON.parse(data));
-//     });
-// });
+
 app.get("/api/notes", function(req, res){
     readFilesAsync(path.join(__dirname, "./db/db.json"), "utf8")
     .then(function(data){
         return res.json(JSON.parse(data))
     });
 });
-
+// modifies db.json file by adding objects (notes) into the array.
 app.post("/api/notes", function(req, res){
     var newNote = req.body;
     readFilesAsync(path.join(__dirname, "./db/db.json"), "utf8")
@@ -50,7 +45,7 @@ app.post("/api/notes", function(req, res){
         }else{
             notes.push(newNote);
         }
-        fs.writeFile((__dirname, "./db/db.json"), JSON.stringify(notes))
+        writeFileAsync(path.join(__dirname, "./db/db.json"), JSON.stringify(notes))
         .then(function(){
             console.log("db.json written");
         });
@@ -58,7 +53,21 @@ app.post("/api/notes", function(req, res){
     res.json(newNote);
 });
 
-
+// module modifies db.json file by deleting the objects (notes) stored as json.
+app.delete("/api/notes/:id", function (req, res){
+    var id = req.params.id;
+    readFilesAsync(path.join(__dirname, "./db/db.json"), "utf8")
+    .then(function(data){
+        notes = JSON.parse(data);
+        notes.splice(id, 1);
+        writeFileAsync(path.join(__dirname, "./db/db.json"), JSON.stringify(notes))
+        .then(function(){
+            console.log("Deleted db.json")
+        });
+            
+    });
+    res.json(id)
+})
 
 // starting our server to begin listening to client requests.
 app.listen(PORT, function(){

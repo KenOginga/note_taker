@@ -28,7 +28,7 @@ app.get("/notes", function(req, res){
 
 app.get("/api/notes", function(req, res){
     readFilesAsync(path.join(__dirname, "./db/db.json"), "utf8")
-    .then(function(data){
+    .then((data) => {
         return res.json(JSON.parse(data))
     });
 });
@@ -36,7 +36,7 @@ app.get("/api/notes", function(req, res){
 app.post("/api/notes", function(req, res){
     var newNote = req.body;
     readFilesAsync(path.join(__dirname, "./db/db.json"), "utf8")
-    .then(function(data){
+    .then((data) => {
         notes = JSON.parse(data);
         if(newNote.id || newNote.id === 0){
             let currentNote = notes[newNote.id];
@@ -46,7 +46,7 @@ app.post("/api/notes", function(req, res){
             notes.push(newNote);
         }
         writeFileAsync(path.join(__dirname, "./db/db.json"), JSON.stringify(notes))
-        .then(function(){
+        .then(() => {
             console.log("db.json written");
         });
     });
@@ -57,11 +57,11 @@ app.post("/api/notes", function(req, res){
 app.delete("/api/notes/:id", function (req, res){
     var id = req.params.id;
     readFilesAsync(path.join(__dirname, "./db/db.json"), "utf8")
-    .then(function(data){
+    .then((data) => {
         notes = JSON.parse(data);
         notes.splice(id, 1);
         writeFileAsync(path.join(__dirname, "./db/db.json"), JSON.stringify(notes))
-        .then(function(){
+        .then(() => {
             console.log("Deleted db.json")
         });
             
